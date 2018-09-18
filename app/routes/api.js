@@ -1,4 +1,5 @@
 var user = require("../models/user");
+var story = require("../models/story");
 var config = require("../../config");
 var jsonwebtoken = require('jsonwebtoken');
 
@@ -7,7 +8,7 @@ var secretKey = config.secretKey;
 function createToken(user){
 
 	var token = jsonwebtoken.sign({
-		_id : user._id,
+		id : user._id,
 		name : user.name,
 		username : user.username
 	}, secretKey, { expiresIn : 60*60*24});
@@ -54,9 +55,10 @@ module.exports = function(app, express){
 	});
 
 	api.post('/login', function(req,res){
+
 		user.findOne({
 			username : req.body.username
-		}).select('password').exec(function(err, user){
+		}).select('name username password').exec(function(err, user){
 
 			if(err){
 				res.send(err);
@@ -90,6 +92,43 @@ module.exports = function(app, express){
 
 
 	});
+
+	api.use(function(req, res, next){
+		var token = req.body.token || req.param('token') || req.headers['x-access-token'] ;
+
+		if(token){
+			console.log(token+" ................" + 2);
+			jsonwebtoken.verify(token, secretKey, function(err, decoded){
+				if(err){
+					res.status(403).send({success : false, message : 'Failed to authenticate user!'});
+				} else {
+					req.decoded = decoded;
+					next();
+				}
+			});
+		} else {
+			res.status(403).send({success : false, message : 'No valid token!'});
+		}
+
+	})
+
+	api.route('/').post(function(req,res){
+
+		var story = new story({
+			creator : req.decoded.id,
+			content : rqe.body.content,
+		});
+
+		story.save(function(err){
+			if(err){
+				res.send(err);
+				return;
+			}
+
+			res.json({success:true, message : 'New story created.'})
+		});
+
+	})
 
 	return api;
 }
