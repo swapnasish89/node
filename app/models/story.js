@@ -1,8 +1,8 @@
 var mongoose = require('mongoose');
-var schema = mongoose.Schema;
+var Schema = mongoose.Schema;
 
-var storySchema = new schema({
-	creator : { Schema.Types.ObjectId, ref :'user'},
+var storySchema = new Schema({
+	creator : { type: Schema.Types.ObjectId, ref :'user'},
 	content : String,
 	created : {type : Date, defauly : Date.now }
 });

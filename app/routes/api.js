@@ -96,8 +96,7 @@ module.exports = function(app, express){
 	api.use(function(req, res, next){
 		var token = req.body.token || req.param('token') || req.headers['x-access-token'] ;
 
-		if(token){
-			console.log(token+" ................" + 2);
+		if(token){			
 			jsonwebtoken.verify(token, secretKey, function(err, decoded){
 				if(err){
 					res.status(403).send({success : false, message : 'Failed to authenticate user!'});
@@ -129,6 +128,21 @@ module.exports = function(app, express){
 		});
 
 	})
+
+	.get(function(req, res){
+		story.find({creator : req.decoded.id }, function(err, stories){
+			if(err){
+				res.send(err);
+				return;
+			}
+
+			res.json(stories);
+		});
+	});
+
+	api.get('/currentUser', function(res, req){
+		res.json(req.decoded);
+	});
 
 	return api;
 }

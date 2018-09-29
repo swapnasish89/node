@@ -1,0 +1,1 @@
+angular.module('mainController', ['userService'])
