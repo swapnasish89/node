@@ -1,27 +1,37 @@
 angular.module('userService', [])
 
-.factory('Auth', function($http, $q, authToken){
+.factory('Auth', function($http, $q, AuthToken){
 
 	var authFactory = {};
 
 	authFactory.login = function(username, password){
-		return $http.post('/api/login', {
+
+		/*return $http.post('/api/login', {
 			username : username,
-			password : username
-		})
-		.success(function(data){
-			authToken.setToken(data.token);	
-			return data;
-		})
+			password : password
+		}).then(function  mySuccess(response){
+			console.log("********** " + response);
+			AuthToken.setToken(response.token);	
+			return response;
+		});*/
+
+		return $http({
+	        method : "POST",
+	        url : "/api/login"
+    	}).then(function mySuccess(response) {
+    		console.log("********** " + response.toString());
+        	AuthToken.setToken(response.token);	
+			return response;
+    	}) 
 	}
 
 	authFactory.logout = function(){
-		authToken.setToken();
+		AuthToken.setToken();
 	}
 
 	authFactory.isLoggedIn = function(){
 
-		if(authToken.getToken()){
+		if(AuthToken.getToken()){
 			return true;
 		} else {
 			return false;
@@ -29,7 +39,7 @@ angular.module('userService', [])
 	}
 
 	authFactory.getUser = function(){
-		if(authToken.getToken()){
+		if(AuthToken.getToken()){
 			return $http.get('/api/currentUser');
 		} else {
 			return false;
@@ -80,5 +90,7 @@ angular.module('userService', [])
 
 		return $q.reject(response);
 	}
+
+	return authInterceptorFactory;
 
 });
