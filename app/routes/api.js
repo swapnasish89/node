@@ -56,9 +56,13 @@ module.exports = function(app, express){
 
 	api.post('/login', function(req,res){
 
+		console.log(req.body.username);
+
 		user.findOne({
 			username : req.body.username
 		}).select('name username password').exec(function(err, user){
+
+			//console.log(1);
 
 			if(err){
 				res.send(err);
@@ -66,6 +70,7 @@ module.exports = function(app, express){
 			}
 
 			if(!user){
+				//console.log(2);
 				res.json({
 					success : false,
 					message : "User does not exist."});
@@ -80,7 +85,9 @@ module.exports = function(app, express){
 				} else {
 					var token = createToken(user);
 
-					res.json({
+					//console.log(token);
+
+					res.status(200).json({
 						success :true,
 						token : token,
 						message : "Success."});	
@@ -95,6 +102,8 @@ module.exports = function(app, express){
 
 	api.use(function(req, res, next){
 		var token = req.body.token || req.param('token') || req.headers['x-access-token'] ;
+
+		console.log("token" ,token);
 
 		if(token){			
 			jsonwebtoken.verify(token, secretKey, function(err, decoded){
@@ -138,9 +147,9 @@ module.exports = function(app, express){
 
 			res.json(stories);
 		});
-	});
+	})
 
-	api.get('/currentUser', function(res, req){
+	api.get('/currentUser', function(req, res){
 		res.json(req.decoded);
 	});
 

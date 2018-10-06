@@ -6,23 +6,13 @@ angular.module('userService', [])
 
 	authFactory.login = function(username, password){
 
-		/*return $http.post('/api/login', {
+		return $http.post('/api/login', {
 			username : username,
 			password : password
 		}).then(function  mySuccess(response){
-			console.log("********** " + response);
-			AuthToken.setToken(response.token);	
-			return response;
-		});*/
-
-		return $http({
-	        method : "POST",
-	        url : "/api/login"
-    	}).then(function mySuccess(response) {
-    		console.log("********** " + response.toString());
-        	AuthToken.setToken(response.token);	
-			return response;
-    	}) 
+			AuthToken.setToken(response.data.token);	
+			return response.data;
+		});
 	}
 
 	authFactory.logout = function(){
@@ -39,8 +29,17 @@ angular.module('userService', [])
 	}
 
 	authFactory.getUser = function(){
+		
 		if(AuthToken.getToken()){
-			return $http.get('/api/currentUser');
+
+			return  $http.get('/api/currentUser', {
+				headers: {
+       					 "x-access-token": AuthToken.getToken()
+    					}
+    			}).then(function mySuccess(response){
+    				return response.data;
+    			});
+
 		} else {
 			return false;
 		}
