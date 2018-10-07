@@ -17,13 +17,13 @@ angular.module('mainCtrl', [])
 			.then(function(data){
 				vm.processing = false;
 
-				Auth.getUser()
+				if(data.success){
+					Auth.getUser()
 					.then(function(data){
 						console.log(data);
 						vm.user = data.data;
 					});
-
-				if(data.success){
+					
 						$location.path('/');
 					} else {
 						vm.error = data.message;

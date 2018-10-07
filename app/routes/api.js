@@ -1,6 +1,7 @@
 var user = require("../models/user");
 var story = require("../models/story");
 var config = require("../../config");
+var constant = require("../common/constant");
 var jsonwebtoken = require('jsonwebtoken');
 
 var secretKey = config.secretKey;
@@ -36,7 +37,7 @@ module.exports = function(app, express){
 				return;
 			}
 
-			res.json({message : 'User has been created!'});
+			res.status(constant.successCode).json({message : 'User has been created!'});
 		});
 
 	});
@@ -49,14 +50,12 @@ module.exports = function(app, express){
 				return;
 			}
 
-			res.json(users);
+			res.status(constant.successCode).json(users);
 
 		});
 	});
 
 	api.post('/login', function(req,res){
-
-		console.log(req.body.username);
 
 		user.findOne({
 			username : req.body.username
@@ -71,7 +70,7 @@ module.exports = function(app, express){
 
 			if(!user){
 				//console.log(2);
-				res.json({
+				res.status(constant.errorCode).json({
 					success : false,
 					message : "User does not exist."});
 			} else {
@@ -79,7 +78,7 @@ module.exports = function(app, express){
 				var  validPassword = user.comparePassword(req.body.password);
 
 				if(!validPassword){
-					res.json({
+					res.status(constant.errorCode).json({
 						success : false,
 						message : "Invalid Password."});
 				} else {
@@ -87,35 +86,29 @@ module.exports = function(app, express){
 
 					//console.log(token);
 
-					res.status(200).json({
+					res.status(constant.successCode).json({
 						success :true,
 						token : token,
 						message : "Success."});	
 				}
-
 			}
 		});
-
-
-
 	});
 
 	api.use(function(req, res, next){
 		var token = req.body.token || req.param('token') || req.headers['x-access-token'] ;
 
-		console.log("token" ,token);
-
 		if(token){			
 			jsonwebtoken.verify(token, secretKey, function(err, decoded){
 				if(err){
-					res.status(403).send({success : false, message : 'Failed to authenticate user!'});
+					res.status(constant.errorCode).send({success : false, message : 'Failed to authenticate user!'});
 				} else {
 					req.decoded = decoded;
 					next();
 				}
 			});
 		} else {
-			res.status(403).send({success : false, message : 'No valid token!'});
+			res.status(constant.errorCode).send({success : false, message : 'No valid token!'});
 		}
 
 	})
@@ -129,11 +122,11 @@ module.exports = function(app, express){
 
 		story.save(function(err){
 			if(err){
-				res.send(err);
+				res.status(constant.errorCode).send(err);
 				return;
 			}
 
-			res.json({success:true, message : 'New story created.'})
+			res.status(constant.successCode).json({success:true, message : 'New story created.'})
 		});
 
 	})
@@ -141,16 +134,16 @@ module.exports = function(app, express){
 	.get(function(req, res){
 		story.find({creator : req.decoded.id }, function(err, stories){
 			if(err){
-				res.send(err);
+				res.status(constant.errorCode).send(err);
 				return;
 			}
 
-			res.json(stories);
+			res.status(constant.successCode).json(stories);
 		});
 	})
 
 	api.get('/currentUser', function(req, res){
-		res.json(req.decoded);
+		res.status(constant.successCode).json(req.decoded);
 	});
 
 	return api;

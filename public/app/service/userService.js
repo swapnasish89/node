@@ -12,6 +12,9 @@ angular.module('userService', [])
 		}).then(function  mySuccess(response){
 			AuthToken.setToken(response.data.token);	
 			return response.data;
+		}, function errorCallback(response){
+			alert("Login Failed.");
+			return response.data;
 		});
 	}
 
