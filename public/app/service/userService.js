@@ -1,5 +1,19 @@
 angular.module('userService', [])
 
+.factory('User', function($http){
+	var userFactiory = {};
+
+	userFactiory.createUser = function(userData){
+		return $http.post('api/signup', userData).then(function successCallback(response){
+
+		}, function errorCallback(response){
+
+		});
+	}
+
+	return userFactiory;
+})
+
 .factory('Auth', function($http, $q, AuthToken){
 
 	var authFactory = {};
@@ -9,7 +23,7 @@ angular.module('userService', [])
 		return $http.post('/api/login', {
 			username : username,
 			password : password
-		}).then(function  mySuccess(response){
+		}).then(function  successCallback(response){
 			AuthToken.setToken(response.data.token);	
 			return response.data;
 		}, function errorCallback(response){
@@ -39,8 +53,10 @@ angular.module('userService', [])
 				headers: {
        					 "x-access-token": AuthToken.getToken()
     					}
-    			}).then(function mySuccess(response){
+    			}).then(function successCallback(response){
     				return response.data;
+    			}, function errorCallback(response){
+    				return false;
     			});
 
 		} else {
@@ -72,11 +88,11 @@ angular.module('userService', [])
 
 })
 
-.factory('AuthInterceptor', function($q, $location, authToken ) {
+.factory('AuthInterceptor', function($q, $location, AuthToken ) {
 	var authInterceptorFactory = {};
 
 	authInterceptorFactory.request = function(config){
-		var token = authToken.getToken();
+		var token = AuthToken.getToken();
 
 		if(token){
 			config.headers['x-access-token'] = token;

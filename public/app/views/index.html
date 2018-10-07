@@ -14,8 +14,28 @@
 <script type="text/javascript" src="app/app.route.js"></script>
 <script type="text/javascript" src="app/app.js"></script>
 </head>
-<body>
+<body ng-controller="mainController as main">
+	<header>
+		<div class="navbar navbar-defaulf">
+			<div class="container">
+				<div class="navbar-header">
+					<a href="/" class="navbar-brand"><span class="glyphicon glyphicon-book"></span>User</a>
+				</div>
 
+				<ul class="nav navbar-nav">
+					<li ><a href="/"></a></li>
+				</ul>
+				<ul class="nav navbar-nav navbar-nav-right">
+					<!-- <a href="/"></a></li> -->
+					<li ng-if="!main.loggedIn" ><a href='/login'>Login</a></li>
+					<li ng-if="!main.loggedIn" ><a href='/signup'>Signup</a></li>
+					<li ng-if="main.loggedIn" ><a href='#'>Hello {{main.userData.name}}</a></li>
+					<li ng-if="main.loggedIn" ><a href="#" ng-click="main.doLogout()">Logout</a></li>
+				</ul>	
+
+			</div>
+		</div>	
+	</header>
 <main class="container">
 	<div ng-view></div>
 </main>

@@ -1,12 +1,36 @@
 angular.module('mainCtrl', [])
 
+.controller('signUpController',['$rootScope','$location', 'User', function($rootScope,  $location, User){
+	
+	var vm = this;
+
+	vm.signupUser = function(){
+		vm.message = '';
+
+		User.createUser(vm.userData).then(function(data){
+			alert("success");
+			$location.path('/login');
+		});
+
+
+	}
+}])
+
 .controller('mainController', [ '$rootScope', '$location', 'Auth', function($rootScope, $location, Auth){
 	var vm = this;
 
-	$rootScope.$on('$rootChangeStart', function(){
+	$rootScope.$on('$routeChangeStart', function(){
 
-		//vm.isLoggedIn = Auth.isLoggedIn();
-		console.log("+++++++++++++++++++++++++++++ Hi ");
+		vm.loggedIn = Auth.isLoggedIn();
+		
+		if(vm.loggedIn){
+			Auth.getUser()
+					.then(function(data){
+						console.log(data);
+						vm.userData = data;
+					});
+		}
+		
 	});
 
 	vm.doLogin = function(){
@@ -20,7 +44,7 @@ angular.module('mainCtrl', [])
 				if(data.success){
 					Auth.getUser()
 					.then(function(data){
-						console.log(data);
+						//console.log(data);
 						vm.user = data.data;
 					});
 					
@@ -32,11 +56,10 @@ angular.module('mainCtrl', [])
 			});
 	}
 
-	vm.logout = function(){
+	vm.doLogout = function(){
 		Auth.logout();
-		$location.path('/logout ');
+		$location.path('/login');
 	}
 
-
-
+	
 }])
