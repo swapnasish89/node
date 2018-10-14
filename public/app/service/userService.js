@@ -1,11 +1,12 @@
 angular.module('userService', [])
 
-.factory('User', function($http){
+.factory('User', function($http, Auth){
 	var userFactiory = {};
 
 	userFactiory.createUser = function(userData){
 		return $http.post('api/signup', userData).then(function successCallback(response){
-
+			
+			return Auth.login(userData.username, userData.password);
 		}, function errorCallback(response){
 
 		});
@@ -42,6 +43,8 @@ angular.module('userService', [])
 			return true;
 		} else {
 			return false;
+
+
 		}
 	}
 

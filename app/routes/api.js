@@ -1,5 +1,5 @@
 var user = require("../models/user");
-var story = require("../models/story");
+var Story = require("../models/Story");
 var config = require("../../config");
 var constant = require("../common/constant");
 var jsonwebtoken = require('jsonwebtoken');
@@ -33,7 +33,7 @@ module.exports = function(app, express){
 		userModel.save(function(err){
 			if(err){
 				console.log("Error ::  "+err );
-				res.send(err);
+				res.status(constant.errorCode).send(err);
 				return;
 			}
 
@@ -46,7 +46,7 @@ module.exports = function(app, express){
 
 		user.find({}, function(err, users){
 			if(err){
-				res.send(err);
+				res.status(constant.errorCode).send(err);
 				return;
 			}
 
@@ -61,7 +61,7 @@ module.exports = function(app, express){
 			username : req.body.username
 		}).select('name username password').exec(function(err, user){
 
-			//console.log(1);
+			console.log('user ',user);
 
 			if(err){
 				res.send(err);
@@ -115,12 +115,13 @@ module.exports = function(app, express){
 
 	api.route('/').post(function(req,res){
 
-		var story = new story({
+
+		var storyModel = new Story({
 			creator : req.decoded.id,
-			content : rqe.body.content,
+			content : req.body.content
 		});
 
-		story.save(function(err){
+		storyModel.save(function(err){
 			if(err){
 				res.status(constant.errorCode).send(err);
 				return;
@@ -132,7 +133,7 @@ module.exports = function(app, express){
 	})
 
 	.get(function(req, res){
-		story.find({creator : req.decoded.id }, function(err, stories){
+		Story.find({creator : req.decoded.id }, function(err, stories){
 			if(err){
 				res.status(constant.errorCode).send(err);
 				return;

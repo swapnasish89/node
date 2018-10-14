@@ -1,6 +1,6 @@
 angular.module('mainCtrl', [])
 
-.controller('signUpController',['$rootScope','$location', 'User', function($rootScope,  $location, User){
+.controller('signUpController',['$rootScope','$location', 'User','Auth', function($rootScope,  $location, User, Auth){
 	
 	var vm = this;
 
@@ -8,11 +8,20 @@ angular.module('mainCtrl', [])
 		vm.message = '';
 
 		User.createUser(vm.userData).then(function(data){
-			alert("success");
-			$location.path('/login');
-		});
+				vm.processing = false;
 
+				if(data.success){
+					Auth.getUser()
+					.then(function(data){
+						vm.user = data;
+					});
+					
+						$location.path('/');
+					} else {
+						vm.error = data.message;
+					}
 
+			});
 	}
 }])
 
@@ -24,13 +33,12 @@ angular.module('mainCtrl', [])
 		vm.loggedIn = Auth.isLoggedIn();
 		
 		if(vm.loggedIn){
-			Auth.getUser()
-					.then(function(data){
-						console.log(data);
-						vm.userData = data;
-					});
-		}
-		
+
+			Auth.getUser().then(function(data){						
+				vm.userData = data;
+			});
+
+		} 
 	});
 
 	vm.doLogin = function(){
@@ -44,8 +52,7 @@ angular.module('mainCtrl', [])
 				if(data.success){
 					Auth.getUser()
 					.then(function(data){
-						//console.log(data);
-						vm.user = data.data;
+						vm.user = data;
 					});
 					
 						$location.path('/');

@@ -10,7 +10,11 @@
 <script type="text/javascript" src="https://code.angularjs.org/1.2.16/angular-route.min.js"></script>
 
 <script type="text/javascript" src="app/service/userService.js"></script>
+<script type="text/javascript" src="app/service/storyService.js"></script>
+
 <script type="text/javascript" src="app/controller/mainController.js"></script>
+<script type="text/javascript" src="app/controller/storyController.js"></script>
+
 <script type="text/javascript" src="app/app.route.js"></script>
 <script type="text/javascript" src="app/app.js"></script>
 </head>
@@ -26,8 +30,7 @@
 					<li ><a href="/"></a></li>
 				</ul>
 				<ul class="nav navbar-nav navbar-nav-right">
-					<!-- <a href="/"></a></li> -->
-					<li ng-if="!main.loggedIn" ><a href='/login'>Login</a></li>
+					<!-- <li ng-if="!main.loggedIn" ><a href='/login'>Login</a></li> -->
 					<li ng-if="!main.loggedIn" ><a href='/signup'>Signup</a></li>
 					<li ng-if="main.loggedIn" ><a href='#'>Hello {{main.userData.name}}</a></li>
 					<li ng-if="main.loggedIn" ><a href="#" ng-click="main.doLogout()">Logout</a></li>
