@@ -12,12 +12,13 @@
 				</div>
 				<div class="panel-body">
 					<form ng-submit="story.createStory()" method="post">
-						<input type="text" class="form-control input-lg"  ng-model="story.storyData.content">
-						<button type="submit" class="btn-btn-success">Save</button>
+						<input type="text" class="form-control input-lg" required=""  ng-model="story.storyData.content" placeholder="...">
+						<button type="submit" class="btn-btn-success">Submit</button>
 					</form>
 				</div>
 			</div>
 			<div class="panel panel-success">
+				<div class="panel-heading">Your Story</div>
 				<div class="panel-body" ng-repeat="data in story.allStories">
 					<p>{{data.content}}</p>
 				</div>

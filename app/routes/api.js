@@ -18,7 +18,7 @@ function createToken(user){
 }
 
 
-module.exports = function(app, express){
+module.exports = function(app, express, io){
 
 	var api = express.Router();
 
@@ -96,7 +96,7 @@ module.exports = function(app, express){
 	});
 
 	api.use(function(req, res, next){
-		var token = req.body.token || req.param('token') || req.headers['x-access-token'] ;
+		var token = req.body.token || req.param('token') || req.headers['x-access-token'];
 
 		if(token){			
 			jsonwebtoken.verify(token, secretKey, function(err, decoded){
@@ -121,12 +121,13 @@ module.exports = function(app, express){
 			content : req.body.content
 		});
 
-		storyModel.save(function(err){
+		storyModel.save(function(err, storyModel){
 			if(err){
 				res.status(constant.errorCode).send(err);
 				return;
 			}
 
+			io.emit('story', storyModel);
 			res.status(constant.successCode).json({success:true, message : 'New story created.'})
 		});
 

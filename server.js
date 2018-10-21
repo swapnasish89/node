@@ -1,7 +1,8 @@
 var config = require('./config');
-var app = require('./applicationConfig');
+var http = require('./applicationConfig');
 
-app.listen(3000, function(err){
+
+http.listen(3000, function(err){
 	if(err){
 		console.log(err);
 	} else {

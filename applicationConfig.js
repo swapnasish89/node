@@ -3,8 +3,11 @@ var bodyParser = require('body-parser');
 var morgan = require('morgan');
 var config = require('./config');
 var db = require('./db');
-
 var app = express();
+
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+
 
 app.use(bodyParser.urlencoded({extended :true}));
 app.use(bodyParser.json());
@@ -20,11 +23,11 @@ app.use(function(req, res, next){
   return next();
 });
 
-var api = require('./app/routes/api')(app, express);
+var api = require('./app/routes/api')(app, express, io);
 app.use("/api",api);
 
 app.get('/*', function(req, res){
 	res.sendFile(__dirname + "/public/app/views/index.html");
 });
 
-module.exports = app;
+module.exports = http;
